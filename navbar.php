@@ -16,8 +16,8 @@
 
 <body class="bg-secondary">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light ">
-            <a class="navbar-brand text-warning" href="#"><h4>SOS</h4></a>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <a class="navbar-brand text-warning" href="index.php"><h4>SOS</h4></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -27,25 +27,25 @@
                         <a class="nav-link" href="#"><h4>Services</h4> <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><h4>About Us</h4></a>
+                        <a class="nav-link" href="about-us.php"><h4>About Us</h4></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href="#"><h4>Contact Us</h4></a>
+                        <a class="nav-link " href="contact-us.php"><h4>Contact Us</h4></a>
                     </li>
                 
                     </ul>
                     <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
                     <?php             session_start();
                     if(isset($_SESSION["user"])){?>
-                                        <li class="nav-item">
-                        <a class="nav-link " href="#"><h4>Apply as Service Provider Us</h4></a>
+                        <a class="nav-link " href="apply.php"><h4>Apply as Service Provider Us</h4></a>
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link " href="logout.php"><h4>Log out</h4></a>
                     </li>
                     <?php }else{ ?>
                         <li class="nav-item">
-                        <a class="nav-link " href="#"><h4>Apply as Service Provider Us</h4></a>
+                        <a class="nav-link " href="apply.php"><h4>Apply as Service Provider Us</h4></a>
                     </li>
                     <li class="nav-item "></li>
                         <a class="nav-link " href="login.php"><h4>Log in</h4></a>
@@ -57,9 +57,7 @@
         </nav>
     </header>
 
-    <footer>
-        <!-- place footer here -->
-    </footer>
+
     <!-- Bootstrap JavaScript Libraries -->
 
     <script src="js/popper.min.js"></script>

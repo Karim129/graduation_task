@@ -77,6 +77,11 @@ if (isset($_POST["submit"])) {
             <div class="form-group">
                 <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password:">
             </div>
+            <div class="role-selection">
+                <label><input type="radio" name="role" value="customer"> CUSTOMER</label>
+                <label><input type="radio" name="role" value="service-provider"> SERVICE PROVIDER</label>
+                <label><input type="radio" name="role" value="admin" checked> ADMIN</label>
+            </div>
             <div class="form-btn">
                 <input type="submit" class="btn btn-primary" value="Register" name="submit">
             </div>

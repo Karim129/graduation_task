@@ -41,6 +41,11 @@ if (isset($_POST["login"])) {
             <div class="form-group">
                 <input type="password" placeholder="Enter Password:" name="password" class="form-control">
             </div>
+            <div class="role-selection">
+                <label><input type="radio" name="role" value="customer"> CUSTOMER</label>
+                <label><input type="radio" name="role" value="service-provider"> SERVICE PROVIDER</label>
+                <label><input type="radio" name="role" value="admin" checked> ADMIN</label>
+            </div>
             <div class="form-btn">
                 <input type="submit" value="Login" name="login" class="btn btn-primary">
             </div>
