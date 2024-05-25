@@ -15,55 +15,75 @@ if (isset($_SESSION["user"])) {
 <body >
     <main >
     <div class="container bg-white">
-        <?php
+<?php
+
+
+
 if (isset($_POST["submit"])) {
     $fullName = $_POST["fullname"];
     $email = $_POST["email"];
     $password = $_POST["password"];
     $passwordRepeat = $_POST["repeat_password"];
+    $role = $_POST["role"]; // Capture the role from the form
+    // var_dump($password);
 
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
     $errors = array();
 
-    if (empty($fullName) or empty($email) or empty($password) or empty($passwordRepeat)) {
+    if (empty($fullName) || empty($email) || empty($password) || empty($passwordRepeat) || empty($role)) {
         array_push($errors, "All fields are required");
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         array_push($errors, "Email is not valid");
     }
     if (strlen($password) < 8) {
-        array_push($errors, "Password must be at least 8 charactes long");
+        array_push($errors, "Password must be at least 8 characters long");
     }
     if ($password !== $passwordRepeat) {
         array_push($errors, "Password does not match");
     }
+
     require_once "database.php";
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    $result = mysqli_query($conn, $sql);
-    $rowCount = mysqli_num_rows($result);
-    if ($rowCount > 0) {
-        array_push($errors, "Email already exists!");
+    $sql = "SELECT * FROM users WHERE email = ?";
+    $stmt = mysqli_stmt_init($conn);
+    if (mysqli_stmt_prepare($stmt, $sql)) {
+        mysqli_stmt_bind_param($stmt, "s", $email);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_store_result($stmt);
+        $rowCount = mysqli_stmt_num_rows($stmt);
+        if ($rowCount > 0) {
+            array_push($errors, "Email already exists!");
+        }
+    } else {
+        array_push($errors, "Database error: failed to prepare statement");
     }
+
     if (count($errors) > 0) {
         foreach ($errors as $error) {
             echo "<div class='alert alert-danger'>$error</div>";
         }
     } else {
-
-        $sql = "INSERT INTO users (full_name, email, password) VALUES ( ?, ?, ? )";
+        $sql = "INSERT INTO users (full_name, email, password, user_type) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_stmt_init($conn);
-        $prepareStmt = mysqli_stmt_prepare($stmt, $sql);
-        if ($prepareStmt) {
-            mysqli_stmt_bind_param($stmt, "sss", $fullName, $email, $passwordHash);
-            mysqli_stmt_execute($stmt);
-            echo "<div class='alert alert-success'>You are registered successfully.</div>";
+        if (mysqli_stmt_prepare($stmt, $sql)) {
+            mysqli_stmt_bind_param($stmt, "ssss", $fullName, $email, $passwordHash, $role);
+            if (mysqli_stmt_execute($stmt)) {
+                echo "<div class='alert alert-success'>You are registered successfully.</div>";
+                $_SESSION["user"] = "yes";
+                header("Location: index.php");
+            } else {
+                echo "<div class='alert alert-danger'>Something went wrong: " . mysqli_stmt_error($stmt) . "</div>";
+            }
         } else {
-            die("Something went wrong");
+            echo "<div class='alert alert-danger'>Something went wrong: " . mysqli_error($conn) . "</div>";
         }
     }
+
+    mysqli_close($conn);
 }
 ?>
+
         <form action="registration.php" method="post" >
             <div class="form-group">
                 <input type="text" class="form-control" name="fullname" placeholder="Full Name:">
@@ -79,8 +99,8 @@ if (isset($_POST["submit"])) {
             </div>
             <div class="role-selection">
                 <label><input type="radio" name="role" value="customer"> CUSTOMER</label>
-                <label><input type="radio" name="role" value="service-provider"> SERVICE PROVIDER</label>
-                <label><input type="radio" name="role" value="admin" checked> ADMIN</label>
+                <label><input type="radio" name="role" value="serviceProvider"> SERVICE PROVIDER</label>
+                <label><input type="radio" name="role" value="admin" > ADMIN</label>
             </div>
             <div class="form-btn">
                 <input type="submit" class="btn btn-primary" value="Register" name="submit">

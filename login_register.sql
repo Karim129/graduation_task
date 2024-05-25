@@ -26,5 +26,5 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` ( `full_name`, `email`, `password`, `user_type`) VALUES
-('Aktar', 'aktar@gmail.com', '$2y$10$Jmf9Xk2y8m.fo3c/ZgKmzOrdIRkU05KSGLI0picKLEtr68ll7hjB.', 'admin');
+('Aktar', 'aktar@gmail.com', md5('12345'), 'admin');
 COMMIT;
