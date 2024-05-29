@@ -79,6 +79,15 @@ CREATE TABLE IF NOT EXISTS `SOS`.`users` (
   `user_type` enum('admin','customer','service_provider') default 'customer' NOT NULL
 ) ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `SOS`.`contact` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
