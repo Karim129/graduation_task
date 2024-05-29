@@ -24,7 +24,7 @@
             <div class="collapse navbar-collapse " id="navbarNav">
                 <ul class="navbar-nav justify-content-center">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#"><h4>Services</h4> <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="service.php"><h4>Services</h4> <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about-us.php"><h4>About Us</h4></a>

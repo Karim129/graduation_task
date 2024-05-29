@@ -1,5 +1,4 @@
-
- <?php require "navbar.php"; ?>
+<?php require "navbar.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +8,6 @@
   <title>Service Provider Form</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
-
     .form-container {
       max-width: 600px;
       margin: 50px auto;
@@ -26,7 +24,6 @@
       text-align: center;
       margin-bottom: 20px;
     }
-
   </style>
 </head>
 
@@ -39,36 +36,46 @@
     <div class="container">
     <div class="form-container">
       <h2 class="form-title">SOS</h2>
-      <form>
+      <a href="index.php" class="back-button">BACK</a>
+      <form action="register_service_provider.php" method="post" enctype="multipart/form-data">
+
         <div class="form-group">
           <label for="fullName">Full Name</label>
-          <input type="text" class="form-control" id="fullName" placeholder="Full Name" required>
+          <input type="text" name="fullname" class="form-control" id="fullName" placeholder="Full Name" required>
         </div>
         <div class="form-group">
           <label for="email">E-mail</label>
-          <input type="email" class="form-control" id="email" placeholder="E-mail" required>
+          <input type="email" name="email" class="form-control" id="email" placeholder="E-mail" required>
         </div>
         <div class="form-group">
           <label for="phoneNumber">Phone Number</label>
-          <input type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" required>
+          <input type="tel" name="phone" class="form-control" id="phoneNumber" placeholder="Phone Number" required>
         </div>
         <div class="form-group">
           <label for="address">Address</label>
-          <input type="text" class="form-control" id="address" placeholder="Address" required>
+          <input type="text" name="address" class="form-control" id="address" placeholder="Address" required>
         </div>
         <div class="form-group">
           <label for="nationalId">National ID</label>
-          <input type="text" class="form-control" id="nationalId" placeholder="National ID" required>
+          <input type="text" name="national_id" class="form-control" id="nationalId" placeholder="National ID" required>
         </div>
         <div class="form-group">
           <label for="services">Services that you will provide</label>
-          <input type="text" class="form-control" id="services" placeholder="Services" required>
+          <select name="services_id" class="form-control" id="services" required>
+            <?php
+            require_once "database.php";
+            $result = mysqli_query($conn, "SELECT id, service_name FROM services");
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<option value='{$row['id']}'>{$row['service_name']}</option>";
+            }
+            ?>
+          </select>
         </div>
         <div class="form-group">
           <label for="documents">Upload your documents and National ID</label>
-          <input type="file" class="form-control-file" id="documents" required>
+          <input type="file" name="documents[]" class="form-control-file" id="documents" multiple required>
         </div>
-        <button type="submit" class="btn btn-submit btn-block">Submit</button>
+        <button type="submit" name="submit" class="btn btn-submit btn-block">Submit</button>
       </form>
     </div>
   </div>

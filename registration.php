@@ -44,7 +44,7 @@ if (isset($_POST["submit"])) {
         array_push($errors, "Password does not match");
     }
 
-    require_once "database.php";
+    require_once "database1.php";
     $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = mysqli_stmt_init($conn);
     if (mysqli_stmt_prepare($stmt, $sql)) {
