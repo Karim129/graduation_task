@@ -1,20 +1,30 @@
-<!doctype html>
+<?php
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 'customer') {
+    header("Location: login.php");
+    exit();
+}
+
+require 'database.php'; // Database connection
+
+$user_id = $_SESSION['user_id'];
+$stmt = $conn->prepare("SELECT services.service_name, service_providers.full_name, reservations.reservation_time FROM reservations JOIN services ON reservations.service_id = services.id JOIN service_providers ON reservations.service_provider_id = service_providers.id WHERE reservations.user_id = ?");
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+?>
+<?php require "navbar.php";?>
+
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Title</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
-    <!-- Bootstrap CSS v5.2.1 -->
-    <link href="css/bootstrap.css" rel="stylesheet" />
-
-    <link href="css/style.css" rel="stylesheet" />
-
+    <meta charset="UTF-8">
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
-<body style="background:darkorchid">
+<body class="bg-secondary">
     <?php
     session_start();
     ?>
@@ -82,11 +92,45 @@
             </div>
         </nav>
     </header>
+        <!-- Main Section -->
+        <main class="contact-section d-flex justify-content-center align-items-center">
+        <div class="container">
+            <h2 class="text-center mb-5">My Reservations</h2>
+            <div class="row justify-content-center">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+            <tr>
+                <th style="width: 25%;">Service</th>
+                <th style="width: 25%;">Provider</th>
+                <th style="width: 50%;">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($row = $result->fetch_assoc()) {?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['service_name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['full_name']); ?></td>
+                    <td><?php echo htmlspecialchars($row['reservation_time']); ?></td>
+                </tr>
+            <?php }?>
+        </tbody>
+    </table>
+</div>
+</div>
+</div>
+</main>
 
-    <!-- Bootstrap JavaScript Libraries -->
+        <!-- Footer -->
+        <footer class="footer">
+        <?php include 'footer.php';?>
+    </footer>
+
+    <!-- Scripts -->
     <script src="js/popper.min.js"></script>
     <script src="js/jquery-3.7.1.min.js"></script>
     <script src="js/bootstrap.js"></script>
 </body>
-
 </html>
+
+

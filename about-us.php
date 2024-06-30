@@ -27,7 +27,7 @@
     <div class="row">
         <div class="col-lg-12 text-center">
             <h1>About Us</h1>
-            <p class="lead">Welcome to SOS! We are dedicated to providing top-notch services for your home and office needs. Our team of experienced professionals is here to help you with repairs, renovations, maintenance, and more. We pride ourselves on our reliability and customer satisfaction.</p>
+            <p class="lead" style="font-size: 24px;font-weight:bold">Welcome to SOS! We are dedicated to providing top-notch services for your home and office needs. Our team of experienced professionals is here to help you with repairs, renovations, maintenance, and more. We pride ourselves on our reliability and customer satisfaction.</p>
         </div>
     </div>
     <div class="row team-section">

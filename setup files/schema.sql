@@ -23,6 +23,7 @@ USE `SOS` ;
 CREATE TABLE IF NOT EXISTS `SOS`.`services` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `service_name` VARCHAR(255) NOT NULL,
+  `available` BOOLEAN NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -39,13 +40,12 @@ CREATE TABLE IF NOT EXISTS `SOS`.`service_providers` (
   `national_id` VARCHAR(45) NOT NULL,
   `services_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
   UNIQUE INDEX `national_id_UNIQUE` (`national_id` ASC) VISIBLE,
   INDEX `fk_service_providers_services1_idx` (`services_id` ASC) VISIBLE,
   CONSTRAINT `fk_service_providers_services1`
     FOREIGN KEY (`services_id`)
     REFERENCES `SOS`.`services` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -55,7 +55,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `SOS`.`documents` (
   `link` TEXT NOT NULL,
-  `user_id` INT NOT NULL,
   `id` INT NOT NULL AUTO_INCREMENT,
   `service_providers_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -63,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `SOS`.`documents` (
   CONSTRAINT `fk_documents_service_providers`
     FOREIGN KEY (`service_providers_id`)
     REFERENCES `SOS`.`service_providers` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -79,6 +78,9 @@ CREATE TABLE IF NOT EXISTS `SOS`.`users` (
   `user_type` enum('admin','customer','service_provider') default 'customer' NOT NULL
 ) ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `SOS`.`contact`
+-- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `SOS`.`contact` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -88,11 +90,41 @@ CREATE TABLE IF NOT EXISTS `SOS`.`contact` (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- -----------------------------------------------------
+-- Table `SOS`.`reservations`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SOS`.`reservations` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `service_id` INT NOT NULL,
+  `service_provider_id` INT NOT NULL,
+  `reservation_time` DATETIME NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+    ON DELETE CASCADE,
+  FOREIGN KEY (`service_id`) REFERENCES `services`(`id`)
+    ON DELETE CASCADE,
+  FOREIGN KEY (`service_provider_id`) REFERENCES `service_providers`(`id`)
+    ON DELETE CASCADE
+) ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
+-- Insert a sample admin user
+INSERT INTO users (full_name, email, password, user_type) VALUES ('Admin User', 'admin@example.com', SHA2('admin_password', 256), 'admin');
 
-INSERT INTO services (service_name) VALUES ('Plumbing'), ('Electrical'), ('Cleaning'), ('Painting');
+-- Insert a sample service provider user
+INSERT INTO users (full_name, email, password, user_type) VALUES ('Service Provider', 'provider@example.com', SHA2('provider_password', 256), 'service_provider');
 
+-- Insert a sample customer user
+INSERT INTO users (full_name, email, password, user_type) VALUES ('Customer User', 'customer@example.com', SHA2('customer_password', 256), 'customer');
+
+-- Insert sample services
+INSERT INTO services (service_name, available) VALUES ('Plumbing', 1), ('Electrical', 1), ('Cleaning', 1), ('Painting', 1);
+
+-- Insert sample service providers
+INSERT INTO service_providers (full_name, email, phone, address, national_id, services_id) VALUES 
+('John Doe', 'john@example.com', '1234567890', '123 Main St', 'A123456789', 1),
+('Jane Smith', 'jane@example.com', '0987654321', '456 Elm St', 'B987654321', 2);
