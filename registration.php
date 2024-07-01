@@ -4,6 +4,15 @@ session_start();
 if (isset($_SESSION["user"])) {
     session_destroy();
 }
+
+// Initialize variables
+$fullName = '';
+$email = '';
+$password = '';
+$passwordRepeat = '';
+$role = 'customer'; // default role
+$errors = array();
+
 if (isset($_POST["submit"])) {
     $fullName = $_POST["fullname"];
     $email = $_POST["email"];
@@ -13,8 +22,7 @@ if (isset($_POST["submit"])) {
 
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-    $errors = array();
-    if (empty($fullName) && empty($email) && empty($password) && empty($passwordRepeat) &&empty($role)) {
+    if (empty($fullName) && empty($email) && empty($password) && empty($passwordRepeat) && empty($role)) {
         array_push($errors, "All fields are required");
     }
     elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -25,7 +33,7 @@ if (isset($_POST["submit"])) {
     }
     elseif ($password !== $passwordRepeat) {
         array_push($errors, "Password does not match");
-    }elseif (empty($role)) {
+    } elseif (empty($role)) {
         array_push($errors, "Add user role");
     }
 
@@ -44,11 +52,7 @@ if (isset($_POST["submit"])) {
         array_push($errors, "Database error: failed to prepare statement");
     }
 
-    if (count($errors) > 0) {
-        // foreach ($errors as $error) {
-        //     echo "<div class='alert alert-danger'>$error</div>";
-        // }
-    } else {
+    if (count($errors) === 0) {
         $sql = "INSERT INTO users (full_name, email, password, user_type) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_stmt_init($conn);
         if (mysqli_stmt_prepare($stmt, $sql)) {
@@ -75,9 +79,8 @@ if (isset($_POST["submit"])) {
 <html lang="en">
 
 <head>
-    <title>Title</title>
-</head>
-<style>
+    <title>Registration</title>
+    <style>
         .yellow-field {
             background-color: yellow;
             color: black;
@@ -87,54 +90,55 @@ if (isset($_POST["submit"])) {
             opacity: 1; /* For older browsers */
         }
     </style>
+</head>
 
-<body >
-    <main >
-    <div class="container bg-white">
-    <img class="my-5 d-block mx-auto" src="registrationImage.jpeg" alt="login" width="300" height="300">
-    <form action="registration.php" method="post">
-            <?php if (isset($errors)) {
-                foreach ($errors as $error) {
-                    echo "<div class='alert alert-danger'>$error</div>";
+<body>
+    <main>
+        <div class="container bg-white">
+            <img class="my-5 d-block mx-auto" src="registrationImage.jpeg" alt="login" width="300" height="300">
+            <form action="registration.php" method="post">
+                <?php
+                if (!empty($errors)) {
+                    foreach ($errors as $error) {
+                        echo "<div class='alert alert-danger'>$error</div>";
+                    }
                 }
-            } ?>
-            <div class="form-group">
-                <input type="text" class="form-control " name="fullname" placeholder="Full Name:" value="<?php echo $fullName; ?>">
-            </div>
-            <div class="form-group">
-                <input type="email" class="form-control " name="email" placeholder="Email:" value="<?php echo $email; ?>">
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control " name="password" placeholder="Password:">
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control " name="repeat_password" placeholder="Repeat Password:">
-            </div>
-            <div class="role-selection">
-                <label><input type="radio" name="role" value="customer" <?php echo $role == 'customer' ? 'checked' : '' ?> class="yellow-field"> CUSTOMER</label>
-                <label><input type="radio" name="role" value="service_provider" <?php echo $role == 'service_provider' ? 'checked' : '' ?> class="yellow-field"> SERVICE PROVIDER</label>
-                <label><input type="radio" name="role" value="admin" <?php echo $role == 'admin' ? 'checked' : '' ?> class="yellow-field"> ADMIN</label>
-            </div>
-            <div class="form-btn">
-                <input type="submit" class="btn  yellow-field " value="Register" name="submit" >
-            </div>
-        </form>
-        <div>
+                ?>
+                <div class="form-group">
+                    <input type="text" class="form-control" name="fullname" placeholder="Full Name:" value="<?php echo htmlspecialchars($fullName); ?>">
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" name="email" placeholder="Email:" value="<?php echo htmlspecialchars($email); ?>">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" placeholder="Password:">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" name="repeat_password" placeholder="Repeat Password:">
+                </div>
+                <div class="role-selection">
+                    <select name="role" id="role" class="form-control">
+                        <option value="customer" <?php echo ($role == 'customer') ? 'selected' : ''; ?>>CUSTOMER</option>
+                        <option value="service_provider" <?php echo ($role == 'service_provider') ? 'selected' : ''; ?>>SERVICE PROVIDER</option>
+                        <option value="admin" <?php echo ($role == 'admin') ? 'selected' : ''; ?>>ADMIN</option>
+                    </select>
+                </div>
+                <div class="form-btn">
+                    <input type="submit" class="btn yellow-field" value="Register" name="submit">
+                </div>
+            </form>
             <div>
                 <p>Already Registered <a href="login.php">Login Here</a></p>
             </div>
         </div>
-    </div>
     </main>
     <footer>
         <!-- place footer here -->
     </footer>
     <!-- Bootstrap JavaScript Libraries -->
-
     <script src="js/popper.min.js"></script>
     <script src="js/jquery-3.7.1.min.js"></script>
     <script src="js/bootstrap.js"></script>
 </body>
 
 </html>
-
