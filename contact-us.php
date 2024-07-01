@@ -92,16 +92,20 @@ if (isset($_POST['submit'])) {
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <?php if (isset($_SESSION["user_type"])) { ?>
+                        <?php if (isset($_SESSION["user_type"])=='service_provider') { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php"><h4>Log out</h4></a>
                         </li>
                     <?php } else { ?>
+                        <?php if (isset($_SESSION["user_type"])=='service_provider') { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item">
                             <a class="nav-link" href="login.php"><h4>Log in</h4></a>
                         </li>

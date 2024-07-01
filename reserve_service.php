@@ -1,12 +1,16 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 'customer') {
+    header("Location: login.php");
+    exit();
+}
 require_once "database.php";
 
 $errors = array();
 $success = false;
 
 // Fetch available services
-$sqlServices = "SELECT id, service_name FROM services WHERE available = 1";
+$sqlServices = "SELECT id, service_name, price FROM services WHERE available = 1";
 $resultServices = mysqli_query($conn, $sqlServices);
 $services = mysqli_fetch_all($resultServices, MYSQLI_ASSOC);
 
@@ -15,9 +19,11 @@ if (isset($_POST['submit'])) {
     $userId = $_SESSION['user_id'];  // Assuming user ID is stored in session after login
     $serviceId = $_POST['service_id'];
     $reservationTime = $_POST['reservation_time'];
+    $address = $_POST['address'];
+    $message = $_POST['message'];
 
     // Validate input
-    if (empty($serviceId) || empty($reservationTime)) {
+    if (empty($serviceId) || empty($reservationTime) || empty($address) || empty($message)) {
         $errors[] = "All fields are required.";
     } else {
         // Check if service is available
@@ -43,12 +49,12 @@ if (isset($_POST['submit'])) {
                 $errors[] = "No service provider available for the selected service.";
             } else {
                 // If no errors, insert data into the database
-                $sql = "INSERT INTO reservations (user_id, service_id, reservation_time, service_provider_id) VALUES (?, ?, ?, ?)";
+                $sql = "INSERT INTO reservations (user_id, service_id, reservation_time, service_provider_id, address, message) VALUES (?, ?, ?, ?, ?, ?)";
                 $stmt = mysqli_prepare($conn, $sql);
                 if (!$stmt) {
                     $errors[] = "Prepare failed: " . mysqli_error($conn);
                 } else {
-                    mysqli_stmt_bind_param($stmt, "iisi", $userId, $serviceId, $reservationTime, $serviceProviderId);
+                    mysqli_stmt_bind_param($stmt, "iisiss", $userId, $serviceId, $reservationTime, $serviceProviderId, $address, $message);
                     try {
                         mysqli_stmt_execute($stmt);
                         $success = true;
@@ -78,9 +84,6 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body style="background:darkorchid">
-    <?php
-    session_start();
-    ?>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <a class="navbar-brand text-warning" href="index.php"><h4>SOS</h4></a>
@@ -109,9 +112,6 @@ if (isset($_POST['submit'])) {
                         
                     <?php } ?>
 
-                 
-                  
-
                     <?php if (isset($_SESSION["user_type"]) && $_SESSION["user_type"] == "service_provider") { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="providerReservation.php"><h4>My reservations</h4></a>
@@ -127,16 +127,20 @@ if (isset($_POST['submit'])) {
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <?php if (isset($_SESSION["user_type"])) { ?>
+                        <?php if ($_SESSION["user_type"] == 'service_provider') { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php"><h4>Log out</h4></a>
                         </li>
                     <?php } else { ?>
+                        <?php if ($_SESSION["user_type"] == 'service_provider') { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item">
                             <a class="nav-link" href="login.php"><h4>Log in</h4></a>
                         </li>
@@ -163,13 +167,23 @@ if (isset($_POST['submit'])) {
                     <label for="service_id">Select Service:</label>
                     <select name="service_id" class="form-control" required>
                         <?php foreach ($services as $service): ?>
-                            <option value="<?php echo $service['id']; ?>"><?php echo $service['service_name']; ?></option>
+                            <option value="<?php echo $service['id']; ?>" data-price="<?php echo $service['price']; ?>">
+                                <?php echo $service['service_name'] . " - $" . $service['price']; ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="reservation_time">Reservation Time:</label>
                     <input type="datetime-local" name="reservation_time" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <input type="text" name="address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea name="message" class="form-control" rows="3" required></textarea>
                 </div>
                 <div class="form-btn">
                     <input type="submit" name="submit" value="Reserve" class="btn btn-primary">

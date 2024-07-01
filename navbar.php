@@ -14,7 +14,8 @@
 
 </head>
 
-<body style="background:darkorchid">
+<body style="background:#b984db;
+">
     <?php
     session_start();
     ?>
@@ -26,6 +27,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav justify-content-center">
+                <li class="nav-item">
+                        <a class="nav-link" href="index.php"><h4>Home</h4></a>
+                    </li>
                 <?php if (isset($_SESSION["user_type"]) && $_SESSION["user_type"] != "admin") { ?>
                     <li class="nav-item">
                             <a class="nav-link" href="reserve_service.php"><h4>Services</h4></a>
@@ -64,16 +68,20 @@
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <?php if (isset($_SESSION["user_type"])) { ?>
+                        <?php if (isset($_SESSION["user_type"])=='service_provider') { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php"><h4>Log out</h4></a>
                         </li>
                     <?php } else { ?>
+                        <?php if (isset($_SESSION["user_type"])=='service_provider') { ?>
                         <li class="nav-item">
                             <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
                         </li>
+                        <?php } ?>
                         <li class="nav-item">
                             <a class="nav-link" href="login.php"><h4>Log in</h4></a>
                         </li>

@@ -1,9 +1,13 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 'admin') {
+    header("Location: ../login.php");
+    exit();
+}
 // Include database connection
 require_once "../database.php";
-// require "../navbar.php";
 // Fetch services and providers data from the database
-$sql = "SELECT services.service_name, service_providers.full_name, service_providers.email, service_providers.phone, service_providers.address
+$sql = "SELECT services.service_name, service_providers.id, service_providers.full_name, service_providers.email, service_providers.phone, service_providers.address
         FROM services
         INNER JOIN service_providers ON services.id = service_providers.services_id";
 
@@ -20,11 +24,6 @@ if (!$result) {
 }
 ?>
 
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,10 +31,9 @@ if (!$result) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Providers - SOS Service Provider</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Bootstrap CSS v5.2.1 -->
-        <link href="../css/bootstrap.css" rel="stylesheet" />
-
-<link href="../css/style.css" rel="stylesheet" />
+    <!-- Bootstrap CSS v5.2.1 -->
+    <link href="../css/bootstrap.css" rel="stylesheet" />
+    <link href="../css/style.css" rel="stylesheet" />
     <style>
         /* Custom CSS styles */
         .filter-form {
@@ -44,9 +42,8 @@ if (!$result) {
         /* Sticky footer styles */
         html, body {
             height: 100%;
-            /* margin-top: 10;
+            background: #e3e0e0; 
 
-            padding: 0; */
         }
         .wrapper {
             min-height: 100%;
@@ -59,10 +56,8 @@ if (!$result) {
         }
     </style>
 </head>
-<body class="bg-secondary">
+<body >
     <!-- Navigation Bar -->
-
-
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <a class="navbar-brand text-warning" href="../index.php"><h4>SOS</h4></a>
@@ -78,7 +73,7 @@ if (!$result) {
                         <a class="nav-link" href="serviceprovider.php"><h4>Services Provider</h4><span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                <a class="nav-link" href="customers.php" "><h4>View Customer Records </h4></a>
+                        <a class="nav-link" href="customers.php"><h4>View Customer Records</h4></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="service.php"><h4>Manage Services</h4></a>
@@ -86,21 +81,15 @@ if (!$result) {
                     <li class="nav-item">
                         <a class="nav-link" href="reservations.php"><h4>Manage Reservations</h4></a>
                     </li>
-                    
-                  
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <?php if (isset($_SESSION["user_type"])) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../apply.php"><h4>Apply as Service Provider</h4></a>
-                        </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" href="../logout.php"><h4>Log out</h4></a>
                         </li>
                     <?php } else { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../apply.php"><h4>Apply as Service Provider</h4></a>
-                        </li>
+                       
                         <li class="nav-item">
                             <a class="nav-link" href="../login.php"><h4>Log in</h4></a>
                         </li>
@@ -129,11 +118,12 @@ if (!$result) {
                 <table class="table table-bordered">
                     <thead class="thead-dark">
                         <tr>
-                            <th >Service</th>
+                            <th>Service</th>
                             <th>Provider Name</th>
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Address</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -144,6 +134,12 @@ if (!$result) {
                                 <td><?php echo $row['email']; ?></td>
                                 <td><?php echo $row['phone']; ?></td>
                                 <td><?php echo $row['address']; ?></td>
+                                <td>
+                                    <form action="delete_provider.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this provider?');">
+                                        <input type="hidden" name="provider_id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php } ?>
                     </tbody>
@@ -159,11 +155,8 @@ if (!$result) {
     </div>
 
     <!-- Scripts -->
-    <script src=".../js/popper.min.js"></script>
-    <script src=".../js/jquery-3.5.1.min.js"></script>
-    <script src=".../js/bootstrap.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/jquery-3.5.1.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-

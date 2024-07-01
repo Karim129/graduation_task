@@ -9,6 +9,8 @@
 	<style>
 		html, body {
 			height: 100%;
+            background:violet;
+
 		}
 		body {
 			display: flex;

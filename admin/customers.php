@@ -37,6 +37,8 @@ $users = $conn->query("SELECT * FROM users")->fetch_all(MYSQLI_ASSOC);
             height: 100%;
             margin-top: 10;
             padding: 0; 
+            background: #e3e0e0; 
+
         }
         .wrapper {
             min-height: 100%;
@@ -49,7 +51,7 @@ $users = $conn->query("SELECT * FROM users")->fetch_all(MYSQLI_ASSOC);
         }
     </style>
 </head>
-<body class="bg-secondary">
+<body >
     <!-- Navigation Bar -->
 
 
@@ -81,16 +83,12 @@ $users = $conn->query("SELECT * FROM users")->fetch_all(MYSQLI_ASSOC);
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <?php if (isset($_SESSION["user_type"])) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../apply.php"><h4>Apply as Service Provider</h4></a>
-                        </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" href="../logout.php"><h4>Log out</h4></a>
                         </li>
                     <?php } else { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../apply.php"><h4>Apply as Service Provider</h4></a>
-                        </li>
+                      
                         <li class="nav-item">
                             <a class="nav-link" href="../login.php"><h4>Log in</h4></a>
                         </li>

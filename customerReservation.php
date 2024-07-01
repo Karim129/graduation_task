@@ -13,7 +13,6 @@ $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
-<?php require "navbar.php";?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,8 +22,14 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom CSS styles */
+        body {
+            background: #b984db;
+        }
+    </style>
 </head>
-<body class="bg-secondary">
+<body >
     <?php
     session_start();
     ?>
@@ -74,16 +79,12 @@ $result = $stmt->get_result();
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <?php if (isset($_SESSION["user_type"])) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
-                        </li>
+                       
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php"><h4>Log out</h4></a>
                         </li>
                     <?php } else { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="apply.php"><h4>Apply as Service Provider</h4></a>
-                        </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" href="login.php"><h4>Log in</h4></a>
                         </li>
