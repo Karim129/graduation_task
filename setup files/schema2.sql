@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `reservations` (
   `service_provider_id` INT NOT NULL,
   `reservation_time` DATETIME NOT NULL,
   `address` VARCHAR(255) NOT NULL,
-  'message' TEXT NOT NULL,
+  `message` TEXT NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`service_id`) REFERENCES `services`(`id`) ON DELETE CASCADE,
